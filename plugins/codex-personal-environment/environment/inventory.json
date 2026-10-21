@@ -1,0 +1,261 @@
+{
+  "skills": [
+    {
+      "name": "imagegen",
+      "kind": "system-reference",
+      "source": "/root/.codex/skills/.system/imagegen",
+      "path": "environment/system-skills/imagegen"
+    },
+    {
+      "name": "openai-docs",
+      "kind": "system-reference",
+      "source": "/root/.codex/skills/.system/openai-docs",
+      "path": "environment/system-skills/openai-docs"
+    },
+    {
+      "name": "plugin-creator",
+      "kind": "system-reference",
+      "source": "/root/.codex/skills/.system/plugin-creator",
+      "path": "environment/system-skills/plugin-creator"
+    },
+    {
+      "name": "review-agent",
+      "kind": "system-reference",
+      "source": "/root/.codex/skills/.system/review-agent",
+      "path": "environment/system-skills/review-agent"
+    },
+    {
+      "name": "skill-creator",
+      "kind": "system-reference",
+      "source": "/root/.codex/skills/.system/skill-creator",
+      "path": "environment/system-skills/skill-creator"
+    },
+    {
+      "name": "skill-installer",
+      "kind": "system-reference",
+      "source": "/root/.codex/skills/.system/skill-installer",
+      "path": "environment/system-skills/skill-installer"
+    },
+    {
+      "name": "command-journal",
+      "kind": "active-personal",
+      "source": "/root/.codex/skills/command-journal",
+      "path": "skills/command-journal"
+    },
+    {
+      "name": "artifact-template-analytics-dashboard",
+      "kind": "plugin-reference",
+      "source": "/root/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-analytics-dashboard",
+      "path": "environment/plugin-skills/openai-templates/artifact-template-analytics-dashboard"
+    },
+    {
+      "name": "artifact-template-business-review",
+      "kind": "plugin-reference",
+      "source": "/root/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-business-review",
+      "path": "environment/plugin-skills/openai-templates/artifact-template-business-review"
+    },
+    {
+      "name": "artifact-template-design-report",
+      "kind": "plugin-reference",
+      "source": "/root/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-design-report",
+      "path": "environment/plugin-skills/openai-templates/artifact-template-design-report"
+    },
+    {
+      "name": "artifact-template-experiment-analysis",
+      "kind": "plugin-reference",
+      "source": "/root/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-experiment-analysis",
+      "path": "environment/plugin-skills/openai-templates/artifact-template-experiment-analysis"
+    },
+    {
+      "name": "artifact-template-financial-budget",
+      "kind": "plugin-reference",
+      "source": "/root/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-financial-budget",
+      "path": "environment/plugin-skills/openai-templates/artifact-template-financial-budget"
+    },
+    {
+      "name": "artifact-template-investment-committee-memo",
+      "kind": "plugin-reference",
+      "source": "/root/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-investment-committee-memo",
+      "path": "environment/plugin-skills/openai-templates/artifact-template-investment-committee-memo"
+    },
+    {
+      "name": "artifact-template-legal-memorandum",
+      "kind": "plugin-reference",
+      "source": "/root/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-legal-memorandum",
+      "path": "environment/plugin-skills/openai-templates/artifact-template-legal-memorandum"
+    },
+    {
+      "name": "artifact-template-market-trends-report",
+      "kind": "plugin-reference",
+      "source": "/root/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-market-trends-report",
+      "path": "environment/plugin-skills/openai-templates/artifact-template-market-trends-report"
+    },
+    {
+      "name": "artifact-template-minimal-letterhead",
+      "kind": "plugin-reference",
+      "source": "/root/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-minimal-letterhead",
+      "path": "environment/plugin-skills/openai-templates/artifact-template-minimal-letterhead"
+    },
+    {
+      "name": "artifact-template-operating-calendar",
+      "kind": "plugin-reference",
+      "source": "/root/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-operating-calendar",
+      "path": "environment/plugin-skills/openai-templates/artifact-template-operating-calendar"
+    },
+    {
+      "name": "artifact-template-operating-review",
+      "kind": "plugin-reference",
+      "source": "/root/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-operating-review",
+      "path": "environment/plugin-skills/openai-templates/artifact-template-operating-review"
+    },
+    {
+      "name": "artifact-template-project-kickoff",
+      "kind": "plugin-reference",
+      "source": "/root/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-project-kickoff",
+      "path": "environment/plugin-skills/openai-templates/artifact-template-project-kickoff"
+    },
+    {
+      "name": "artifact-template-project-tracker",
+      "kind": "plugin-reference",
+      "source": "/root/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-project-tracker",
+      "path": "environment/plugin-skills/openai-templates/artifact-template-project-tracker"
+    },
+    {
+      "name": "artifact-template-sales-pipeline",
+      "kind": "plugin-reference",
+      "source": "/root/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-sales-pipeline",
+      "path": "environment/plugin-skills/openai-templates/artifact-template-sales-pipeline"
+    },
+    {
+      "name": "artifact-template-simple-dark-mode",
+      "kind": "plugin-reference",
+      "source": "/root/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-simple-dark-mode",
+      "path": "environment/plugin-skills/openai-templates/artifact-template-simple-dark-mode"
+    },
+    {
+      "name": "artifact-template-simple-light-mode",
+      "kind": "plugin-reference",
+      "source": "/root/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-simple-light-mode",
+      "path": "environment/plugin-skills/openai-templates/artifact-template-simple-light-mode"
+    },
+    {
+      "name": "artifact-template-strategy-memorandum",
+      "kind": "plugin-reference",
+      "source": "/root/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-strategy-memorandum",
+      "path": "environment/plugin-skills/openai-templates/artifact-template-strategy-memorandum"
+    },
+    {
+      "name": "artifact-template-system-design",
+      "kind": "plugin-reference",
+      "source": "/root/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-system-design",
+      "path": "environment/plugin-skills/openai-templates/artifact-template-system-design"
+    },
+    {
+      "name": "artifact-template-team-alignment",
+      "kind": "plugin-reference",
+      "source": "/root/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-team-alignment",
+      "path": "environment/plugin-skills/openai-templates/artifact-template-team-alignment"
+    },
+    {
+      "name": "artifact-template-three-statement-forecast",
+      "kind": "plugin-reference",
+      "source": "/root/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-three-statement-forecast",
+      "path": "environment/plugin-skills/openai-templates/artifact-template-three-statement-forecast"
+    },
+    {
+      "name": "plugin-management",
+      "kind": "plugin-reference",
+      "source": "/root/.codex/plugins/cache/openai-curated-remote/plugin-management/0.1.0/skills/plugin-management",
+      "path": "environment/plugin-skills/plugin-management/plugin-management"
+    },
+    {
+      "name": "sites",
+      "kind": "plugin-reference",
+      "source": "/root/.codex/plugins/cache/openai-curated-remote/sites/1.1.0/skills/sites",
+      "path": "environment/plugin-skills/sites/sites"
+    },
+    {
+      "name": "sites-remix",
+      "kind": "plugin-reference",
+      "source": "/root/.codex/plugins/cache/openai-curated-remote/sites/1.1.0/skills/sites-remix",
+      "path": "environment/plugin-skills/sites/sites-remix"
+    },
+    {
+      "name": "create-pet",
+      "kind": "plugin-reference",
+      "source": "/root/.codex/plugins/cache/openai-curated-remote/work-pets/0.1.6/skills/create-pet",
+      "path": "environment/plugin-skills/work-pets/create-pet"
+    },
+    {
+      "name": "pets",
+      "kind": "plugin-reference",
+      "source": "/root/.codex/plugins/cache/openai-curated-remote/work-pets/0.1.6/skills/pets",
+      "path": "environment/plugin-skills/work-pets/pets"
+    },
+    {
+      "name": "update-pet",
+      "kind": "plugin-reference",
+      "source": "/root/.codex/plugins/cache/openai-curated-remote/work-pets/0.1.6/skills/update-pet",
+      "path": "environment/plugin-skills/work-pets/update-pet"
+    }
+  ],
+  "plugins": [
+    {
+      "name": "github",
+      "version": "0.1.12-5f7cd798dc99",
+      "source": "openai-curated-remote/github/0.1.12-5f7cd798dc99",
+      "has_apps": true,
+      "has_mcp": false,
+      "status": "cached; enabled status not verified",
+      "restore": "Install the original plugin and reconnect its services on the destination device."
+    },
+    {
+      "name": "openai-templates",
+      "version": "0.1.1",
+      "source": "openai-curated-remote/openai-templates/0.1.1",
+      "has_apps": true,
+      "has_mcp": false,
+      "status": "cached; enabled status not verified",
+      "restore": "Install the original plugin and reconnect its services on the destination device."
+    },
+    {
+      "name": "plugin-management",
+      "version": "0.1.0",
+      "source": "openai-curated-remote/plugin-management/0.1.0",
+      "has_apps": true,
+      "has_mcp": false,
+      "status": "cached; enabled status not verified",
+      "restore": "Install the original plugin and reconnect its services on the destination device."
+    },
+    {
+      "name": "sites",
+      "version": "1.1.0",
+      "source": "openai-curated-remote/sites/1.1.0",
+      "has_apps": true,
+      "has_mcp": false,
+      "status": "cached; enabled status not verified",
+      "restore": "Install the original plugin and reconnect its services on the destination device."
+    },
+    {
+      "name": "work-pets",
+      "version": "0.1.6",
+      "source": "openai-curated-remote/work-pets/0.1.6",
+      "has_apps": true,
+      "has_mcp": false,
+      "status": "cached; enabled status not verified",
+      "restore": "Install the original plugin and reconnect its services on the destination device."
+    }
+  ],
+  "excluded": [
+    "auth.json and credentials",
+    "sessions, logs, memories and databases",
+    "workspace projects and datasets",
+    "OS, Python environments and executable runtimes",
+    "remote tool implementations and account authorizations"
+  ],
+  "runtime": {
+    "system": "Linux",
+    "machine": "x86_64",
+    "python": "3.14.8"
+  }
+}
