@@ -2,12 +2,12 @@
 
 个人 Codex 技能与环境迁移仓库，用 Git 保存技能，在不同设备上获取相同版本。
 
-当前提供 **codex-personal-environment 1.0.0**：1 个可加载的个人技能、32 个系统及插件技能目录快照，以及 5 个缓存插件的恢复清单。它不是操作系统或 Conda 环境镜像，也不会把本地环境自动同步到 OpenAI 账户。
+当前提供 **codex-personal-environment 1.1.0**：2 个可加载的个人技能、32 个系统及插件技能目录快照，以及 5 个缓存插件的恢复清单。它不是操作系统或 Conda 环境镜像，也不会把本地环境自动同步到 OpenAI 账户。
 
 ## 开始使用
 
 1. [下载仓库 ZIP](https://github.com/dragonslayf/useful-codex-skills/archive/refs/heads/main.zip)，或克隆本仓库。
-2. 只需要命令记录功能：按照[安装指南](docs/INSTALL.md)安装 `command-journal`。
+2. 只需要单个技能：按照[安装指南](docs/INSTALL.md)安装 `command-journal` 或 `yinxiang-skill`。
 3. 需要迁移环境：阅读[环境恢复说明](docs/MIGRATION.md)。
 
 ```bash
@@ -23,6 +23,7 @@ python scripts/verify_plugin.py
 | 路径 | 用途 |
 | --- | --- |
 | `plugins/codex-personal-environment/skills/command-journal/` | 可加载技能：完整记录命令、中文解释、执行结果与对话 Markdown 日志 |
+| `plugins/codex-personal-environment/skills/yinxiang-skill/` | 可加载技能：创建、更新、搜索印象笔记，管理笔记本和标签，以及网页剪藏 |
 | `plugins/codex-personal-environment/environment/system-skills/` | 6 个系统技能目录快照，仅供参考 |
 | `plugins/codex-personal-environment/environment/plugin-skills/` | 26 个插件技能目录快照，包含附属脚本和模板 |
 | `plugins/codex-personal-environment/environment/inventory.json` | 技能来源、5 个缓存插件版本和环境摘要 |
@@ -38,6 +39,6 @@ python scripts/verify_plugin.py
 
 ## 来源与许可
 
-个人技能在本次对话中创建；系统与插件快照来自原运行环境。原文件中的许可及权利声明仍适用，本仓库不为第三方内容重新授予许可。缓存插件存在不代表已启用或目标设备具备其服务权限。
+`command-journal` 在本仓库建立时创建；`yinxiang-skill` 1.0.4 来自印象笔记官方分发包。系统与插件快照来自原运行环境。原文件中的许可及权利声明仍适用，本仓库不为第三方内容重新授予许可。缓存插件存在不代表已启用或目标设备具备其服务权限。
 
 不包含账户凭据、会话数据库、项目数据或运行容器。详细范围和已验证事项见[迁移说明](docs/MIGRATION.md)。

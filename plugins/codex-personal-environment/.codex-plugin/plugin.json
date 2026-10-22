@@ -1,15 +1,15 @@
 {
   "name": "codex-personal-environment",
-  "version": "1.0.0",
-  "description": "个人 Codex 技能及环境迁移包，包含命令日志技能、技能源码快照和恢复清单。",
+  "version": "1.1.0",
+  "description": "个人 Codex 技能及环境迁移包，包含命令日志、印象笔记技能、技能源码快照和恢复清单。",
   "author": {
     "name": "Personal"
   },
   "skills": "./skills/",
   "interface": {
     "displayName": "我的 Codex 环境",
-    "shortDescription": "命令日志技能与跨设备环境迁移资料",
-    "longDescription": "启用个人命令日志技能，保存系统和插件技能源码快照、模型配置及插件恢复清单。远程服务需重新安装连接，不包含账户凭据或运行容器。",
+    "shortDescription": "命令日志、印象笔记与跨设备环境迁移资料",
+    "longDescription": "启用个人命令日志与印象笔记技能，保存系统和插件技能源码快照、模型配置及插件恢复清单。远程服务需重新安装连接，不包含账户凭据、印象笔记 Token 或运行容器。",
     "developerName": "Personal",
     "category": "Productivity",
     "capabilities": [],

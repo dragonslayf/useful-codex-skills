@@ -1,0 +1,358 @@
+# 印象笔记 Skill（Cursor 专用）
+
+## 重要约束
+
+- **不要创建本地文件**代替调用 API
+- **不要自行生成或猜测 Token**
+- **不要引导用户去 developer/token 页面**，正确授权地址是 `https://app.yinxiang.com/third/skills-oauth/`
+- 优先使用当前平台对应的参考命令或已有脚本调用 API；如果参考脚本疑似有误、在当前环境运行异常、输出格式不适合继续处理，或与本文接口地址、请求字段或 Token 规则不一致，不要修改 skill 内置参考脚本，改为以本文接口说明为准，自行生成可运行的临时 bash/PowerShell 脚本并执行，真实调用 API。允许生成临时脚本来发起真实 API 请求；不得用本地文件、模拟数据或手写结果代替 API 调用结果，不得编造返回结果。
+- 创建笔记和网页剪藏互斥：有 URL + 剪藏意图 → 网页剪藏；纯文字记录 → 创建笔记
+- 只推荐本文已支持的能力；未列入场景的请求视为不支持
+- 所有业务接口请求体都要传 `source` 标识请求来源，统一传 `"source":"skill"`
+- 可以根据接口返回的 `code`、`status.code`、`msg`、`message` 等字段判断结果，但用户可见回复不要展示接口原始返回、JSON 或技术字段。成功时用自然语言说明成功；失败时参考 `message`/`msg` 的含义，结合用户原始请求改写成中文自然语言原因，不要照抄英文接口消息；如果没有可用原因，只说操作失败或出错。给出自然语言结论后，不要再追加“接口返回 code/status/msg/message 表示...”之类的解释。
+
+---
+
+## 第一步：平台检测
+
+遇到印象笔记相关请求时，**首先**判断当前 shell 环境，二选一执行：
+
+**若当前为 bash/zsh（macOS / Linux）：**
+```bash
+uname -s
+```
+返回 `Darwin` → macOS；返回 `Linux` → Linux。后续使用 **bash 命令**。
+
+**若当前为 PowerShell（Windows）：**
+```powershell
+$env:OS
+```
+返回 `Windows_NT` → Windows。后续使用 **PowerShell 命令**。
+
+> 判断依据：能否识别 `uname` 命令。可以 → bash 环境；不能（报错"未找到命令"）→ PowerShell 环境。
+
+---
+
+## 第二步：Token 检查
+
+**macOS / Linux：**
+```bash
+T="$(cat ~/.config/yinxiang-skill/token 2>/dev/null || echo "$YX_AUTH_TOKEN")"; [ -n "$T" ] && echo "已授权" || echo "未授权"
+```
+
+**Windows (PowerShell)：**
+```powershell
+$raw = Get-Content "$HOME\.config\yinxiang-skill\token" -Raw -EA SilentlyContinue; $t = if ($raw) { $raw.Trim() } elseif ($env:YX_AUTH_TOKEN) { $env:YX_AUTH_TOKEN.Trim() }; if ($t) { "已授权" } else { "未授权" }
+```
+
+Token 为空 → 停止，提示用户说"授权印象笔记"。
+
+---
+
+## 授权场景
+
+**触发词：** "授权印象笔记"、"印象笔记授权"、"配置印象笔记"
+
+1. 告知用户：
+   > 请访问 https://app.yinxiang.com/third/skills-oauth/ 完成授权。
+   > 授权后页面显示以 **S=s** 开头的 Token，请发给我。
+
+2. 收到 Token 后按平台保存：
+
+   **macOS / Linux：**
+   ```bash
+   mkdir -p ~/.config/yinxiang-skill && printf '%s' '<Token>' > ~/.config/yinxiang-skill/token && chmod 600 ~/.config/yinxiang-skill/token
+   ```
+
+   **Windows (PowerShell)：**
+   ```powershell
+   New-Item -ItemType Directory -Force "$HOME\.config\yinxiang-skill" | Out-Null; Set-Content "$HOME\.config\yinxiang-skill\token" "<Token>" -NoNewline -Encoding UTF8
+   ```
+
+3. 告知授权成功，列出以下 10 个可用场景。
+
+---
+
+## 场景一：创建笔记
+
+**触发词：** "记一下"、"帮我记录"、"存到笔记"、"记录一下"、"保存到笔记"、"帮我存一下"、"把这个记下来"
+
+**逻辑：** 用户内容以 Markdown 格式填入 `content`。只传用户明确要求的字段；指定笔记本时先查场景六获取 `guid` 后追加 `notebookGuid`，指定标签时追加 `tagNames`。
+
+**macOS / Linux：**
+```bash
+curl -s -X POST \
+  "https://app.yinxiang.com/third/third-party-note-service/restful/v1/createNoteFromMCP" \
+  -H "Content-Type: application/json" \
+  -H "auth: $(cat ~/.config/yinxiang-skill/token 2>/dev/null || echo "$YX_AUTH_TOKEN")" \
+  -d '{"title":"TITLE","content":"CONTENT","source":"skill"}'
+```
+
+**Windows (PowerShell)：**
+```powershell
+$raw = Get-Content "$HOME\.config\yinxiang-skill\token" -Raw -EA SilentlyContinue; $t = if ($raw) { $raw.Trim() } elseif ($env:YX_AUTH_TOKEN) { $env:YX_AUTH_TOKEN.Trim() }
+$body = '{"title":"TITLE","content":"CONTENT","source":"skill"}'
+$r = Invoke-WebRequest -Uri "https://app.yinxiang.com/third/third-party-note-service/restful/v1/createNoteFromMCP" -Method POST -Headers @{auth=$t} -Body ([System.Text.Encoding]::UTF8.GetBytes($body)) -ContentType "application/json; charset=utf-8" -UseBasicParsing
+$r.Content
+```
+
+指定笔记本时追加 `"notebookGuid":"GUID"`；指定标签时追加 `"tagNames":["标签1","标签2"]`。返回 `{"code":0}` 表示成功；否则参考 `message` 字段的语义线索，结合用户请求改写成中文自然语言原因。回复用户时不要写“接口返回 code=.../message=...”，不要照抄英文接口消息，应说“创建失败：原因”或简单说“创建失败”。
+
+---
+
+## 场景二：更新笔记
+
+**触发词：** "更新笔记"、"修改笔记"、"编辑笔记"、"给笔记添加标签"、"删除笔记标签"、"清空笔记标签"、"修改笔记本"、"移动笔记"
+
+**逻辑：** 必须有 `noteGuid`。除 `noteGuid` 外，只传用户明确要修改的字段，不要传空字符串或占位符。用户只给标题或关键词时，先搜索笔记或列出笔记，让用户确认要更新的笔记 ID；搜索/列表结果只用于确认笔记 ID，不用于校验标签名称。请求体包含 `content` 字段时，即使用户已直接提供 `noteGuid`，也必须先提示并等待用户确认："确认要修改笔记内容吗？此操作会将笔记里的原有内容替换掉。" 用户确认后再调用更新笔记接口。增加或删除标签前先通过场景十获取当前标签，计算最终完整标签全集；最终标签非空时传 `tagNames`，最终标签为空或用户要清空所有标签时必须传 `clearTags:true`，不要只传空 `tagNames`。
+
+**macOS / Linux：**
+```bash
+curl -s -X POST \
+  "https://app.yinxiang.com/third/third-party-note-service/restful/v1/updateNoteFromMCP" \
+  -H "Content-Type: application/json" \
+  -H "auth: $(cat ~/.config/yinxiang-skill/token 2>/dev/null || echo "$YX_AUTH_TOKEN")" \
+  -d '{"noteGuid":"GUID","title":"TITLE","source":"skill"}'
+```
+
+**Windows (PowerShell)：**
+```powershell
+$raw = Get-Content "$HOME\.config\yinxiang-skill\token" -Raw -EA SilentlyContinue; $t = if ($raw) { $raw.Trim() } elseif ($env:YX_AUTH_TOKEN) { $env:YX_AUTH_TOKEN.Trim() }
+$body = '{"noteGuid":"GUID","title":"TITLE","source":"skill"}'
+$r = Invoke-WebRequest -Uri "https://app.yinxiang.com/third/third-party-note-service/restful/v1/updateNoteFromMCP" -Method POST -Headers @{auth=$t} -Body ([System.Text.Encoding]::UTF8.GetBytes($body)) -ContentType "application/json; charset=utf-8" -UseBasicParsing
+$r.Content
+```
+
+可更新字段包括 `title`、`content`、`notebookGuid`、`tagNames`、`clearTags`；移动笔记只传 `notebookGuid`，更新标签传完整最终 `tagNames`，清空标签传 `clearTags:true`。返回 `{"code":0}` 表示成功；否则参考 `message` 字段的语义线索，结合用户请求改写成中文自然语言原因。回复用户时不要写“接口返回 code=.../message=...”，不要照抄英文接口消息，应说“更新失败：原因”或简单说“更新失败”。
+
+---
+
+## 场景三：网页剪藏
+
+**触发词：** 消息包含 URL + "保存"/"剪藏"/"收藏"
+
+优先参考 `scripts/clip-url.sh` / `scripts/clip-url.ps1` 的流程实现。若脚本不可用或执行异常，可自行生成等价命令，但必须保留：后台请求继续执行、最多等待 5 秒观察返回、5 秒内无返回时回复固定话术、5 秒内有返回时输出接口响应并按通用结果规则判断成功或失败。
+
+**macOS / Linux：**
+```bash
+curl -s -X POST \
+  "https://app.yinxiang.com/third/clipper-gateway/restful/v1/clipAndSaveNote" \
+  -H "Content-Type: text/plain" \
+  -H "auth: $(cat ~/.config/yinxiang-skill/token 2>/dev/null || echo "$YX_AUTH_TOKEN")" \
+  -H "clipper-c-auth: $(cat ~/.config/yinxiang-skill/token 2>/dev/null || echo "$YX_AUTH_TOKEN")" \
+  -d '{"url":"URL","source":"skill"}' &
+```
+
+**Windows (PowerShell)：**
+```powershell
+$raw = Get-Content "$HOME\.config\yinxiang-skill\token" -Raw -EA SilentlyContinue; $t = if ($raw) { $raw.Trim() } elseif ($env:YX_AUTH_TOKEN) { $env:YX_AUTH_TOKEN.Trim() }
+$body = '{"url":"URL","source":"skill"}'
+Start-Job { param($t,$b) Invoke-WebRequest -Uri "https://app.yinxiang.com/third/clipper-gateway/restful/v1/clipAndSaveNote" -Method POST -Headers @{auth=$t;"clipper-c-auth"=$t} -Body ([System.Text.Encoding]::UTF8.GetBytes($b)) -ContentType "text/plain; charset=utf-8" -UseBasicParsing } -ArgumentList $t,$body
+```
+
+结果处理：
+- 后台发起剪藏请求，最多等待 5 秒读取接口返回；等待超时也不要终止剪藏请求
+- 5 秒内没有拿到接口返回时，告知“剪藏任务已提交，请稍后到APP里查看剪藏结果”
+- 5 秒内拿到接口返回时，按通用结果规则判断；`code == 0` 或 `status.code == 0` 表示提交成功。成功时结合返回内容自然说明剪藏结果；如果返回中包含笔记 ID 等关键信息，可以一并展示
+- 如果接口返回失败、`code` / `status.code` 表示失败，或响应里有明确失败结果，参考 `message` / `msg` 字段，结合用户请求改写成中文失败原因
+
+---
+
+## 场景四：列出笔记
+
+**触发词：** "列出笔记"、"有哪些笔记"、"我有哪些笔记"
+
+**macOS / Linux：**
+```bash
+curl -s -X POST \
+  "https://app.yinxiang.com/third/ai-chat-note/grpc-api/search/searchNotesByFilter" \
+  -H "Content-Type: application/json" \
+  -H "auth: $(cat ~/.config/yinxiang-skill/token 2>/dev/null || echo "$YX_AUTH_TOKEN")" \
+  -d '{"source":"skill","resultSpec":{"includeContent":false,"includeResources":false,"includeTags":true,"includeResourceContent":false}}'
+```
+
+**Windows (PowerShell)：**
+```powershell
+$raw = Get-Content "$HOME\.config\yinxiang-skill\token" -Raw -EA SilentlyContinue; $t = if ($raw) { $raw.Trim() } elseif ($env:YX_AUTH_TOKEN) { $env:YX_AUTH_TOKEN.Trim() }
+$body = '{"source":"skill","resultSpec":{"includeContent":false,"includeResources":false,"includeTags":true,"includeResourceContent":false}}'
+$r = Invoke-WebRequest -Uri "https://app.yinxiang.com/third/ai-chat-note/grpc-api/search/searchNotesByFilter" -Method POST -Headers @{auth=$t} -Body ([System.Text.Encoding]::UTF8.GetBytes($body)) -ContentType "application/json; charset=utf-8" -UseBasicParsing
+$r.Content
+```
+
+搜索/列表接口返回搜索总数和笔记列表。若响应包含 `data.total`，它是当前查询条件下的笔记总数，不要用返回列表长度代替。笔记列表每条至少展示笔记 ID 和标题：笔记 ID 优先取 `noteGuid`，兼容 `guid` / `noteId`；标题优先取 `noteTitle`，兼容 `title`。不要展示正文。用户说“最近笔记/最近的笔记/查找最近笔记”时，这不是列出笔记的独立能力，而是搜索笔记的创建时间筛选条件。
+
+---
+
+## 场景五：搜索笔记
+
+**触发词：** "搜一下"、"搜下"、"帮我搜索"、"找找我哪些笔记提到了"、"笔记里有没有关于"、"有多少篇"、"一共多少篇"、"总数"
+
+支持按需传入这些搜索字段：
+- `keyword`、`title`、`tagNames`、`notebookName`、`notebookGuid`、`guids`、`startTime`、`endTime`
+- 已知笔记本 GUID 时优先只传 `notebookGuid`，不要同时传 `notebookName`
+- 不要添加搜索接口未声明的参数，不要基于搜索/列表结果校验标签名称
+
+时间筛选规则：
+- 当前 skill 只支持按笔记创建时间查询，`startTime` 和 `endTime` 表示创建时间范围，不支持按更新时间、修改时间或编辑时间查询；单位为 UTC 毫秒时间戳
+- 用户明确要求按“更新时间/修改时间/编辑时间/今天更新了哪些笔记”等条件查询时，不要直接按创建时间发起查询；先说明“当前我只支持按笔记创建时间查询，暂不支持按更新时间查询”，再询问是否改查对应时间范围内创建的笔记
+- 用户给出自然语言日期或时间时，先按用户所在本地时区理解，再转换成 UTC 毫秒时间戳
+- 只给日期时，开始日期取当天 `00:00:00.000`，结束日期取当天 `23:59:59.999`
+- “今天/昨天/周五/最近两天”等相对日期或星期说法，先按用户所在本地时区和当前日期确定本地时间范围
+- 用户说“最近”时，不要追问，固定理解为最近 3 天
+- “最近”可以和关键词、标题、标签、笔记本、笔记 ID 等条件组合，组合条件统一通过搜索脚本的 JSON 请求体传入
+
+时间意图示例：
+- “今天的笔记有哪些” → 查今天创建的笔记
+- “今天更新了哪些笔记” → 先说明不支持按更新时间查询，并询问是否改查今天创建的笔记
+- “A 笔记本下最近有哪些笔记” → 同时传笔记本条件和最近 3 天创建时间范围
+
+**macOS / Linux：**
+```bash
+curl -s -X POST \
+  "https://app.yinxiang.com/third/ai-chat-note/grpc-api/search/searchNotesByFilter" \
+  -H "Content-Type: application/json" \
+  -H "auth: $(cat ~/.config/yinxiang-skill/token 2>/dev/null || echo "$YX_AUTH_TOKEN")" \
+  -d '{"keyword":"KEYWORD","source":"skill","resultSpec":{"includeContent":false,"includeResources":false,"includeTags":true,"includeResourceContent":false}}'
+```
+
+**Windows (PowerShell)：**
+```powershell
+$raw = Get-Content "$HOME\.config\yinxiang-skill\token" -Raw -EA SilentlyContinue; $t = if ($raw) { $raw.Trim() } elseif ($env:YX_AUTH_TOKEN) { $env:YX_AUTH_TOKEN.Trim() }
+$body = '{"keyword":"KEYWORD","source":"skill","resultSpec":{"includeContent":false,"includeResources":false,"includeTags":true,"includeResourceContent":false}}'
+$r = Invoke-WebRequest -Uri "https://app.yinxiang.com/third/ai-chat-note/grpc-api/search/searchNotesByFilter" -Method POST -Headers @{auth=$t} -Body ([System.Text.Encoding]::UTF8.GetBytes($body)) -ContentType "application/json; charset=utf-8" -UseBasicParsing
+$r.Content
+```
+
+展示搜索总数和响应中实际返回的笔记 ID、标题；不要展示正文。`status.code == 1107` 表示无结果；`status.code` 成功但 `data.total == 0` 表示匹配总数为 0。总数 `< 100` 时，自然说明本次查询条件下的总数，然后展示笔记列表。总数 `>= 100` 时，必须根据 `data.total` 触发提示，即使接口本次实际返回列表少于 100 条也要提示，回复结构为：
+1. 自然说明本次查询条件下的总数，并追加固定话术：“为了避免列表太长影响阅读，最多返回100条笔记。”
+2. 单独一段使用固定话术：“受AI上下文长度限制，建议你让我对笔记做总结时，一次不要超过20篇。”
+3. 列出本次响应中可展示的笔记列表，最多 100 条。
+不要向用户说明“接口实际返回 X 条”“本次返回列表数量”等技术细节；如果接口只返回了少于 100 条，就列出实际返回的这些条目即可。
+查询失败时参考 `message`/`msg` 字段的语义线索，结合用户查询对象改写成中文自然语言原因；如果没有可用原因，只告诉用户搜索笔记失败或出错。不要直接展示接口返回字段和值，也不要照抄英文接口消息。
+
+---
+
+## 场景六：列出笔记本
+
+**触发词：** "有哪些笔记本"、"列出笔记本"、"我的笔记本"、"笔记本列表"
+
+**macOS / Linux：**
+```bash
+curl -s -X POST \
+  "https://app.yinxiang.com/third/ai-chat-note/grpc-api/search/listNoteBooks" \
+  -H "Content-Type: application/json" \
+  -H "auth: $(cat ~/.config/yinxiang-skill/token 2>/dev/null || echo "$YX_AUTH_TOKEN")" \
+  -d '{"source":"skill"}'
+```
+
+**Windows (PowerShell)：**
+```powershell
+$raw = Get-Content "$HOME\.config\yinxiang-skill\token" -Raw -EA SilentlyContinue; $t = if ($raw) { $raw.Trim() } elseif ($env:YX_AUTH_TOKEN) { $env:YX_AUTH_TOKEN.Trim() }
+$body = '{"source":"skill"}'
+$r = Invoke-WebRequest -Uri "https://app.yinxiang.com/third/ai-chat-note/grpc-api/search/listNoteBooks" -Method POST -Headers @{auth=$t} -Body ([System.Text.Encoding]::UTF8.GetBytes($body)) -ContentType "application/json; charset=utf-8" -UseBasicParsing
+$r.Content
+```
+
+取 `data.noteBookList`，展示 `name` 和 `guid`。
+
+---
+
+## 场景七：列出标签
+
+**触发词：** "有哪些标签"、"列出所有标签"、"我的标签"、"标签列表"
+
+**macOS / Linux：**
+```bash
+curl -s -X POST \
+  "https://app.yinxiang.com/third/ai-chat-note/grpc-api/search/listTags" \
+  -H "Content-Type: application/json" \
+  -H "auth: $(cat ~/.config/yinxiang-skill/token 2>/dev/null || echo "$YX_AUTH_TOKEN")" \
+  -d '{"source":"skill"}'
+```
+
+**Windows (PowerShell)：**
+```powershell
+$raw = Get-Content "$HOME\.config\yinxiang-skill\token" -Raw -EA SilentlyContinue; $t = if ($raw) { $raw.Trim() } elseif ($env:YX_AUTH_TOKEN) { $env:YX_AUTH_TOKEN.Trim() }
+$body = '{"source":"skill"}'
+$r = Invoke-WebRequest -Uri "https://app.yinxiang.com/third/ai-chat-note/grpc-api/search/listTags" -Method POST -Headers @{auth=$t} -Body ([System.Text.Encoding]::UTF8.GetBytes($body)) -ContentType "application/json; charset=utf-8" -UseBasicParsing
+$r.Content
+```
+
+取 `data.tagList`，展示 `tagName` 和 `tagGuid`。
+
+---
+
+## 场景八：创建标签
+
+**触发词：** "创建标签"、"新建标签"、"建一个标签"
+
+**macOS / Linux：**
+```bash
+curl -s -X POST \
+  "https://app.yinxiang.com/third/third-party-note-service/restful/v1/createTagFromMCP" \
+  -H "Content-Type: application/json" \
+  -H "auth: $(cat ~/.config/yinxiang-skill/token 2>/dev/null || echo "$YX_AUTH_TOKEN")" \
+  -d '{"tagName":"TAG_NAME","source":"skill"}'
+```
+
+**Windows (PowerShell)：**
+```powershell
+$raw = Get-Content "$HOME\.config\yinxiang-skill\token" -Raw -EA SilentlyContinue; $t = if ($raw) { $raw.Trim() } elseif ($env:YX_AUTH_TOKEN) { $env:YX_AUTH_TOKEN.Trim() }
+$body = '{"tagName":"TAG_NAME","source":"skill"}'
+$r = Invoke-WebRequest -Uri "https://app.yinxiang.com/third/third-party-note-service/restful/v1/createTagFromMCP" -Method POST -Headers @{auth=$t} -Body ([System.Text.Encoding]::UTF8.GetBytes($body)) -ContentType "application/json; charset=utf-8" -UseBasicParsing
+$r.Content
+```
+
+返回 `{"code":0}` 表示成功，成功时取 `tagGuid`；否则参考 `message` 字段的语义线索，结合用户请求改写成中文自然语言原因。回复用户时不要写“接口返回 code=.../message=...”，不要照抄英文接口消息，应说“创建标签失败：原因”或简单说“创建标签失败”。
+
+---
+
+## 场景九：创建笔记本
+
+**触发词：** "创建笔记本"、"新建笔记本"、"建一个笔记本"
+
+**macOS / Linux：**
+```bash
+curl -s -X POST \
+  "https://app.yinxiang.com/third/third-party-note-service/restful/v1/createNotebookFromMCP" \
+  -H "Content-Type: application/json" \
+  -H "auth: $(cat ~/.config/yinxiang-skill/token 2>/dev/null || echo "$YX_AUTH_TOKEN")" \
+  -d '{"bookName":"BOOK_NAME","source":"skill"}'
+```
+
+**Windows (PowerShell)：**
+```powershell
+$raw = Get-Content "$HOME\.config\yinxiang-skill\token" -Raw -EA SilentlyContinue; $t = if ($raw) { $raw.Trim() } elseif ($env:YX_AUTH_TOKEN) { $env:YX_AUTH_TOKEN.Trim() }
+$body = '{"bookName":"BOOK_NAME","source":"skill"}'
+$r = Invoke-WebRequest -Uri "https://app.yinxiang.com/third/third-party-note-service/restful/v1/createNotebookFromMCP" -Method POST -Headers @{auth=$t} -Body ([System.Text.Encoding]::UTF8.GetBytes($body)) -ContentType "application/json; charset=utf-8" -UseBasicParsing
+$r.Content
+```
+
+返回 `{"code":0}` 表示成功，成功时取 `notebookGuid`；否则参考 `message` 字段的语义线索，结合用户请求改写成中文自然语言原因。回复用户时不要写“接口返回 code=.../message=...”，不要照抄英文接口消息，应说“创建笔记本失败：原因”或简单说“创建笔记本失败”。
+
+---
+
+## 场景十：获取笔记详情
+
+**触发词：** "笔记详情 [ID]"、"[ID] 笔记详情"、"查看笔记 [ID]"
+
+从消息提取笔记 GUID 替换 `GUID`。
+
+**macOS / Linux：**
+```bash
+curl -s -X POST \
+  "https://app.yinxiang.com/third/ai-chat-note/grpc-api/search/getNoteDetail" \
+  -H "Content-Type: application/json" \
+  -H "auth: $(cat ~/.config/yinxiang-skill/token 2>/dev/null || echo "$YX_AUTH_TOKEN")" \
+  -d '{"guid":"GUID","source":"skill","resultSpec":{"includeContent":true,"includeResources":false,"includeTags":true,"includeResourceContent":false}}'
+```
+
+**Windows (PowerShell)：**
+```powershell
+$raw = Get-Content "$HOME\.config\yinxiang-skill\token" -Raw -EA SilentlyContinue; $t = if ($raw) { $raw.Trim() } elseif ($env:YX_AUTH_TOKEN) { $env:YX_AUTH_TOKEN.Trim() }
+$body = '{"guid":"GUID","source":"skill","resultSpec":{"includeContent":true,"includeResources":false,"includeTags":true,"includeResourceContent":false}}'
+$r = Invoke-WebRequest -Uri "https://app.yinxiang.com/third/ai-chat-note/grpc-api/search/getNoteDetail" -Method POST -Headers @{auth=$t} -Body ([System.Text.Encoding]::UTF8.GetBytes($body)) -ContentType "application/json; charset=utf-8" -UseBasicParsing
+$r.Content
+```
+
+取 `data.dataDetail`，展示笔记完整内容。

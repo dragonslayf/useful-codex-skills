@@ -2,7 +2,7 @@
 
 ## 已保存
 
-- 1 个个人技能：command-journal，可通过插件加载。
+- 2 个个人技能：command-journal、yinxiang-skill，可通过插件加载。
 - 6 个系统技能快照：imagegen、openai-docs、plugin-creator、review-agent、skill-creator、skill-installer。
 - 26 个插件技能目录快照及其附属资源。
 - 5 个缓存插件的名称与版本：github、openai-templates、plugin-management、sites、work-pets。准确版本见 inventory.json。
@@ -19,9 +19,9 @@
 
 ## 未包含
 
-账户凭据、令牌、会话及记忆数据库、项目代码和数据集、Conda/Python 软件环境、操作系统镜像、远程工具实现均不在此包中。原 /workspace 的项目 trusted 设置未导出，因为它属于本机信任选择。
+账户凭据、令牌（包括印象笔记 Token）、会话及记忆数据库、项目代码和数据集、Conda/Python 软件环境、操作系统镜像、远程工具实现均不在此包中。原 /workspace 的项目 trusted 设置未导出，因为它属于本机信任选择。
 
-inventory.json 中的绝对来源路径仅用于追溯，不是目标设备必须创建的目录。自定义 command-journal 会根据目标工作区创建日志。
+inventory.json 中的绝对来源路径仅用于追溯，不是目标设备必须创建的目录。自定义 command-journal 会根据目标工作区创建日志；yinxiang-skill 在新设备上需要重新完成印象笔记授权。
 
 ## 已验证与尚未验证
 

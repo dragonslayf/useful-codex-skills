@@ -43,6 +43,13 @@
       "path": "skills/command-journal"
     },
     {
+      "name": "yinxiang-skill",
+      "version": "1.0.4",
+      "kind": "active-personal",
+      "source": "https://cdn.yinxiang.com/ai/yinxiang-skill-v1.0.4.zip",
+      "path": "skills/yinxiang-skill"
+    },
+    {
       "name": "artifact-template-analytics-dashboard",
       "kind": "plugin-reference",
       "source": "/root/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-analytics-dashboard",
